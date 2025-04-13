@@ -1,8 +1,9 @@
 import { AiOutlineRight } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import Data from "@/interface/data.interface";
 
-const QuestionScreen = ({ data }: { data: any }) => {
+const QuestionScreen = ({ data }: { data: Data }) => {
     const [timer, setTimer] = useState(30);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
