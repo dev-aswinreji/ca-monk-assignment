@@ -1,7 +1,12 @@
 
 import { Button } from '@/components/ui/button';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 const Home = () => {
+    const navigate = useNavigate()
+    function handleStart() {
+        navigate("/questions")
+    }
     return (
         <>
             <div className="flex flex-col items-center justify-center min-h-screen space-y-8">
@@ -44,7 +49,7 @@ const Home = () => {
                     <Button className="bg-white text-blue-500 border border-blue-500 px-12">
                         Back
                     </Button>
-                    <Button className="bg-blue-500 text-white px-12">
+                    <Button className="bg-blue-500 text-white px-12" onClick={handleStart}>
                         Start
                     </Button>
                 </div>

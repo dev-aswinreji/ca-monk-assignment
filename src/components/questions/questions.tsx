@@ -2,7 +2,6 @@ import { AiOutlineRight } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Data from "@/interface/data.interface";
-import { time } from "console";
 
 const QuestionScreen = ({ data }: { data: Data }) => {
     const [timer, setTimer] = useState(30);
@@ -10,14 +9,14 @@ const QuestionScreen = ({ data }: { data: Data }) => {
     const totalQuestions = data.questions.length;
     const question = data.questions[currentQuestionIndex];
 
-    const parsedQuestion = question.question.split(/_+/g);
+    const parsedQuestion = question?.question?.split(/_+/g);
     const blanksCount = parsedQuestion.length - 1;
     const [quizEnded, setQuizEnded] = useState(false);
 
     const [filledBlanks, setFilledBlanks] = useState<(string | null)[]>(Array(blanksCount).fill(null));
     const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
     useEffect(() => {
-        if (quizEnded) return; // stop timer if quiz has ended
+        if (quizEnded) return;
 
         const interval = setInterval(() => {
             setTimer((prev) => {
