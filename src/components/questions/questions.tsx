@@ -2,6 +2,7 @@ import { AiOutlineRight } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Data from "@/interface/data.interface";
+import { time } from "console";
 
 const QuestionScreen = ({ data }: { data: Data }) => {
     const [timer, setTimer] = useState(30);
@@ -9,18 +10,36 @@ const QuestionScreen = ({ data }: { data: Data }) => {
     const totalQuestions = data.questions.length;
     const question = data.questions[currentQuestionIndex];
 
-    const parsedQuestion = question.question.split("___");
+    const parsedQuestion = question.question.split(/_+/g);
     const blanksCount = parsedQuestion.length - 1;
+    const [quizEnded, setQuizEnded] = useState(false);
 
     const [filledBlanks, setFilledBlanks] = useState<(string | null)[]>(Array(blanksCount).fill(null));
     const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
-
     useEffect(() => {
+        if (quizEnded) return; // stop timer if quiz has ended
+
         const interval = setInterval(() => {
-            setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+            setTimer((prev) => {
+                if (prev === 1) {
+                    if (currentQuestionIndex < totalQuestions - 1) {
+                        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+                        setTimer(30);
+                        setFilledBlanks(Array(blanksCount).fill(null));
+                        setDisabledOptions([]);
+                    } else {
+                        setQuizEnded(true);
+                        setTimer(0)
+                        clearInterval(interval);
+                    }
+                }
+                return prev > 0 ? prev - 1 : 0;
+            });
         }, 1000);
+
         return () => clearInterval(interval);
-    }, [timer]);
+    }, [timer, currentQuestionIndex, quizEnded]);
+
 
     const handleOptionClick = (option: string) => {
         const nextEmptyIndex = filledBlanks.findIndex((blank) => blank === null);
@@ -51,11 +70,22 @@ const QuestionScreen = ({ data }: { data: Data }) => {
         }
     };
 
+    if (timer === 0) {
+        goToNextQuestion()
+        setTimer(30)
+    }
+    if (quizEnded) {
+        return (
+            <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
+                <div className="text-2xl font-semibold text-gray-700">🎉 Quiz Ended!</div>
+            </div>
+        );
+    }
     return (
         <div className="w-screen h-screen bg-gray-100 flex items-center justify-center">
             <div
                 className="relative bg-white rounded-[24px] p-[40px] flex flex-col justify-between"
-                style={{ width: "975px", height: "650px", gap: "56px" }}
+                style={{ width: "975px", height: "650px", gap: "6px" }}
             >
                 {/* Top bar */}
                 <div className="flex justify-between items-center" style={{ height: "38px" }}>
@@ -66,11 +96,11 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                 </div>
 
                 {/* Progress bar */}
-                <div className="flex gap-2 mt-6" style={{ height: "16px" }}>
+                <div className="flex gap-2 mt-6" style={{ height: "16px", paddingBottom: "6rem" }}>
                     {Array.from({ length: totalQuestions }).map((_, i) => (
                         <div
                             key={i}
-                            className={`h-3 rounded-full flex-1 ${i <= currentQuestionIndex ? "bg-yellow-400" : "bg-gray-200"}`}
+                            className={`h-1 rounded-full flex-1 ${i <= currentQuestionIndex ? "bg-yellow-400" : "bg-gray-200"}`}
                         />
                     ))}
                 </div>
@@ -83,18 +113,13 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                     <div className="flex flex-wrap justify-center items-center gap-2">
                         {parsedQuestion.map((part, idx) => (
                             <span key={idx} className="text-lg font-medium flex items-center">
-                                {part}
+                                {part.trim()}
                                 {idx !== parsedQuestion.length - 1 && (
                                     <button
-                                        className="inline-flex items-center justify-center border-b-2 border-dashed border-gray-400 text-blue-500 font-semibold transition hover:bg-gray-100"
-                                        style={{
-                                            width: "97px",
-                                            height: "42px",
-                                            margin: "0 4px",
-                                        }}
                                         onClick={() => handleBlankClick(idx)}
+                                        className="min-w-[80px] h-[42px] border-b-2 border-dashed border-gray-400 text-blue-500 font-semibold transition hover:bg-gray-100 px-2"
                                     >
-                                        {filledBlanks[idx] || "_______"}
+                                        {filledBlanks[idx] || ""}
                                     </button>
                                 )}
                             </span>
@@ -116,8 +141,6 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                                 style={{
                                     width: "377px",
                                     height: "38px",
-                                    borderRadius: "8px",
-                                    borderWidth: "1px",
                                     padding: "8px 12px",
                                     justifyContent: "center",
                                 }}
@@ -134,9 +157,14 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                 <div className="absolute bottom-10 right-10">
                     <button
                         onClick={goToNextQuestion}
-                        className="w-12 h-12 border-2 border-blue-500 flex items-center justify-center rounded-md hover:bg-blue-100 transition"
+                        disabled={!filledBlanks.every((blank) => blank !== null)}
+                        className={`w-12 h-12 border-2 flex items-center justify-center rounded-md transition
+            ${filledBlanks.every((blank) => blank !== null)
+                                ? "border-blue-500 text-blue-500 hover:bg-blue-100"
+                                : "border-gray-300 text-gray-300 cursor-not-allowed"
+                            }`}
                     >
-                        <AiOutlineRight className="text-blue-500 text-xl" />
+                        <AiOutlineRight className="text-xl" />
                     </button>
                 </div>
             </div>
