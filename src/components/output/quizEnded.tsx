@@ -1,52 +1,101 @@
-const QuizEndedScreen = () => {
-    return (
-        <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
-            <div
-                className="flex flex-col items-center"
-                style={{ width: '743px', height: '458.7px', gap: '80px' }}
-            >
-                {/* Ellipse + Content */}
-                <div
-                    className="flex flex-col items-center"
-                    style={{ gap: '40px', width: '743px', height: '268.7px' }}
-                >
-                    {/* Ellipse */}
-                    <div
-                        className="rounded-full border-blue-500 border-[9.92px] bg-white rotate-90"
-                        style={{
-                            width: '144.7px',
-                            height: '144.7px',
-                        }}
-                    />
+import React, { useEffect, useState } from "react";
 
-                    {/* Content Text */}
-                    <p
-                        className="text-center"
-                        style={{
-                            fontFamily: 'Inter',
-                            fontWeight: 400,
-                            fontSize: '18px',
-                            lineHeight: '28px',
-                            letterSpacing: '-1%',
-                            width: '743px',
-                            height: '84px',
-                        }}
-                    >
-                        While you correctly formed several sentences, there are a couple of areas where improvement is needed.
-                        Pay close attention to sentence structure and word placement to ensure clarity and correctness.
-                        Review your responses below for more details.
-                    </p>
+interface ReviewEntry {
+  question: string;
+  userResponse: string[];
+  correctAnswer: string[];
+}
+
+const QuizReviewScreen = () => {
+  const [results, setResults] = useState<ReviewEntry[]>([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("quizResults");
+    if (stored) {
+      setResults(JSON.parse(stored));
+    }
+  }, []);
+
+  const reconstructPrompt = (questionStr: string, answers: string[]) => {
+    if (!questionStr) return "";
+
+    const questionParts = questionStr.split(/_+/g);
+    let constructed = "";
+
+    for (let i = 0; i < questionParts.length; i++) {
+      constructed += questionParts[i];
+      if (i < answers.length) {
+        constructed += answers[i];
+      }
+    }
+    return constructed;
+  };
+
+  return (
+    <div className="w-screen min-h-screen bg-gray-50 p-10 flex flex-col items-center gap-6">
+      <h1 className="text-3xl font-bold mb-6">Quiz Review</h1>
+
+      {results.map((entry, index) => {
+        const isCorrect =
+          JSON.stringify(entry.userResponse.map((a) => a.trim().toLowerCase())) ===
+          JSON.stringify(entry.correctAnswer.map((a) => a.trim().toLowerCase()));
+
+        const correctPrompt = reconstructPrompt(entry.question, entry.correctAnswer);
+        const userPrompt = reconstructPrompt(entry.question, entry.userResponse);
+
+        return (
+          <div
+            key={index}
+            className="w-[700px] rounded-[16px] shadow-[0px_4px_70px_0px_#CB353E1A] overflow-hidden bg-white"
+          >
+            {/* Prompt Section */}
+            <div className="w-full px-4 pt-4 pb-3 flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <div className="bg-gray-100 rounded-lg px-2 py-1">
+                  <span className="text-[14px] leading-[20px] font-medium font-inter tracking-[-0.01em]">
+                    Prompt
+                  </span>
+                </div>
+              </div>
+
+              <div className="rounded p-2">
+                <div className="text-[16px] leading-[22px] font-medium font-inter">
+                  {correctPrompt}
+                </div>
+              </div>
+            </div>
+
+            {/* Response Section */}
+            <div className="w-full flex flex-col gap-3 bg-[#F6F9F9] p-6 rounded-b-[16px]">
+              <div className="flex gap-3 items-center">
+                <div className="text-[#616464] text-[16px] font-medium font-inter tracking-[-0.01em]">
+                  Your response
                 </div>
 
-                {/* Go to Dashboard Button */}
-                <button
-                    className="border-2 border-blue-500 text-blue-500 bg-white px-6 py-2 rounded-lg hover:bg-blue-50"
-                >
-                    Go to Dashboard
-                </button>
+                {isCorrect ? (
+                  <div className="bg-[#EEFBEF] rounded-[16px] px-2 py-1 flex items-center justify-center">
+                    <span className="text-[#317F39] font-medium text-[16px] font-inter leading-[22px] tracking-[-0.01em]">
+                      Correct
+                    </span>
+                  </div>
+                ) : (
+                  <div className="bg-[#FCEBEC] rounded-[16px] px-2 py-1 flex items-center justify-center">
+                    <span className="text-[#9E2930] font-medium text-[16px] font-inter leading-[22px] tracking-[-0.01em]">
+                      Incorrect
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-[16px] font-medium font-inter leading-[22px]">
+                {userPrompt}
+              </div>
             </div>
-        </div>
-    );
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
-export default QuizEndedScreen
+export default QuizReviewScreen;

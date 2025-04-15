@@ -2,34 +2,59 @@ import { AiOutlineRight } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Data from "@/interface/data.interface";
+import { useNavigate } from "react-router-dom";
+
 
 const QuestionScreen = ({ data }: { data: Data }) => {
-    const [timer, setTimer] = useState(30);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const navigate = useNavigate();
     const totalQuestions = data.questions.length;
-    const question = data.questions[currentQuestionIndex];
-
-    const parsedQuestion = question?.question?.split(/_+/g);
-    const blanksCount = parsedQuestion.length - 1;
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [timer, setTimer] = useState(30);
     const [quizEnded, setQuizEnded] = useState(false);
 
+    const currentQuestion = data.questions[currentQuestionIndex];
+    // Split the question string by one or more underscores.
+    const parsedQuestion = currentQuestion.question.split(/_+/g);
+    const blanksCount = parsedQuestion.length - 1;
+
+    // Store filled answers; each entry corresponds to a blank.
     const [filledBlanks, setFilledBlanks] = useState<(string | null)[]>(Array(blanksCount).fill(null));
+    // Disable an option if it was selected
     const [disabledOptions, setDisabledOptions] = useState<string[]>([]);
+
+    // This state collects answers for each question.
+    // Each entry: { questionId, userResponse (array of strings), correctAnswer }
+    const [collectedAnswers, setCollectedAnswers] = useState<
+        { questionId: string; question: string; userResponse: string[]; correctAnswer: string[] }[]
+    >([]);
+
+    // Timer effect – when timer reaches 0, auto-advance the question.
     useEffect(() => {
         if (quizEnded) return;
 
         const interval = setInterval(() => {
             setTimer((prev) => {
                 if (prev === 1) {
+                    storeAnswer(); // store current question's responses
+                    // If more questions, move to next; otherwise, quiz ended.
                     if (currentQuestionIndex < totalQuestions - 1) {
                         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
                         setTimer(30);
                         setFilledBlanks(Array(blanksCount).fill(null));
                         setDisabledOptions([]);
                     } else {
+                        // Last question finished: mark quiz ended, save answers, and navigate.
                         setQuizEnded(true);
-                        setTimer(0)
+                        setTimer(0);
                         clearInterval(interval);
+                        // Save to localStorage and navigate after a slight delay
+                        localStorage.setItem("quizResults", JSON.stringify(collectedAnswers.concat([{
+                            questionId: currentQuestion.questionId,
+                            question: currentQuestion.question,
+                            userResponse: filledBlanks.map((ans) => ans || ""),
+                            correctAnswer: currentQuestion.correctAnswer,
+                        }])));
+                        navigate("/ended");
                     }
                 }
                 return prev > 0 ? prev - 1 : 0;
@@ -38,7 +63,6 @@ const QuestionScreen = ({ data }: { data: Data }) => {
 
         return () => clearInterval(interval);
     }, [timer, currentQuestionIndex, quizEnded]);
-
 
     const handleOptionClick = (option: string) => {
         const nextEmptyIndex = filledBlanks.findIndex((blank) => blank === null);
@@ -60,7 +84,20 @@ const QuestionScreen = ({ data }: { data: Data }) => {
         setDisabledOptions((prev) => prev.filter((opt) => opt !== value));
     };
 
+    // Store current question's answer in our collectedAnswers state.
+    const storeAnswer = () => {
+        const entry = {
+            questionId: currentQuestion.questionId,
+            question: currentQuestion.question,
+            userResponse: filledBlanks.map((val) => val || ""),
+            correctAnswer: currentQuestion.correctAnswer,
+        };
+        setCollectedAnswers((prev) => [...prev, entry]);
+    };
+
+    // Manual "Next" button – also store answer then move to next.
     const goToNextQuestion = () => {
+        storeAnswer();
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setTimer(30);
@@ -69,17 +106,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
         }
     };
 
-    if (timer === 0) {
-        goToNextQuestion()
-        setTimer(30)
-    }
-    if (quizEnded) {
-        return (
-            <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
-                <div className="text-2xl font-semibold text-gray-700">🎉 Quiz Ended!</div>
-            </div>
-        );
-    }
+    // If quiz ended, we have navigated away; otherwise, render the question screen.
     return (
         <div className="w-screen h-screen bg-gray-100 flex items-center justify-center">
             <div
@@ -132,7 +159,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                     style={{ width: "895px", height: "252px", gap: "64px" }}
                 >
                     <div className="grid grid-cols-2 gap-[16px]">
-                        {question.options.map((option, idx) => (
+                        {currentQuestion.options.map((option, idx) => (
                             <Button
                                 key={idx}
                                 onClick={() => handleOptionClick(option)}
@@ -158,10 +185,10 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         onClick={goToNextQuestion}
                         disabled={!filledBlanks.every((blank) => blank !== null)}
                         className={`w-12 h-12 border-2 flex items-center justify-center rounded-md transition
-            ${filledBlanks.every((blank) => blank !== null)
+                ${filledBlanks.every((blank) => blank !== null)
                                 ? "border-blue-500 text-blue-500 hover:bg-blue-100"
-                                : "border-gray-300 text-gray-300 cursor-not-allowed"
-                            }`}
+                                : "border-gray-300 text-gray-300 cursor-not-allowed"}
+              `}
                     >
                         <AiOutlineRight className="text-xl" />
                     </button>

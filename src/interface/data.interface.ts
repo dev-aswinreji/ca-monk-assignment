@@ -8,4 +8,5 @@ interface Questions {
     questionType: string;
     answerType: string;
     options: string[];
+    correctAnswer: string[];
 }
