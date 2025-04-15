@@ -1,54 +1,45 @@
-# React + TypeScript + Vite
+# React Fill-in-the-Blanks Quiz App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a React JS application that presents a fill‑in‑the‑blanks quiz. Users answer quiz questions where each blank is evaluated separately. The app saves user responses in localStorage to persist state even on refresh and then displays a detailed quiz review with an overall score calculated from the number of correct blanks.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Fill-in‑the‑blanks Quiz:**  
+  Users answer questions by selecting options to fill missing words in sentences.
 
-## Expanding the ESLint configuration
+- **Per‑Blank Evaluation:**  
+  Each answer blank is checked individually (case-insensitive, with trimmed input) to compute an overall percentage score.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **State Persistence:**  
+  Quiz state (current question, timer, answers, etc.) is stored in localStorage so that refreshing the page does not restart the quiz.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Quiz Review Screen:**  
+  After finishing the quiz or on quitting, users are taken to a review page that shows:
+  - The complete prompt with the correct answer filled in.
+  - The user's answers and an indicator ("Correct" or "Incorrect").
+  - An overall score displayed in an ellipse.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Responsive Design:**  
+  The UI is built with Tailwind CSS for a pixel-perfect design that matches provided specifications.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Technologies Used
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- **React JS**  
+- **TypeScript**
+- **React Router**
+- **Tailwind CSS**  
+- **LocalStorage API**
+
+## Getting Started
+
+### Prerequisites
+
+Ensure you have Node.js (>= 14.x) and Yarn or npm installed.
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/react-quiz-app.git
+   cd react-quiz-app
+
