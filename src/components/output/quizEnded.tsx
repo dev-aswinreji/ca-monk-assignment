@@ -25,7 +25,7 @@ const QuizReviewScreen = () => {
     for (let i = 0; i < questionParts.length; i++) {
       constructed += questionParts[i];
       if (i < answers.length) {
-        constructed += answers[i];
+        constructed += answers[i].toLocaleLowerCase();
       }
     }
     return constructed;
