@@ -170,12 +170,11 @@ const QuestionScreen = ({ data }: { data: Data }) => {
         navigate("/ended");
     };
 
-
     return (
-        <div className="w-screen h-screen bg-gray-100 flex items-center justify-center">
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
             <div
-                className="relative bg-white rounded-[24px] p-[40px] flex flex-col justify-between"
-                style={{ width: "975px", height: "650px", gap: "6px" }}
+                className="relative bg-white rounded-[24px] p-[20px] sm:p-[30px] lg:p-[40px] flex flex-col justify-between max-w-full"
+                style={{ maxWidth: "975px", height: "650px", gap: "6px" }}
             >
                 {/* Top bar */}
                 <div className="flex justify-between items-center" style={{ height: "38px" }}>
@@ -186,24 +185,22 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                     >
                         Quit
                     </Button>
-
                 </div>
-
+    
                 {/* Progress bar */}
                 <div className="flex gap-2 mt-6" style={{ height: "16px", paddingBottom: "6rem" }}>
                     {Array.from({ length: totalQuestions }).map((_, i) => (
                         <div
                             key={i}
-                            className={`h-1 rounded-full flex-1 ${i <= currentQuestionIndex ? "bg-yellow-400" : "bg-gray-200"
-                                }`}
+                            className={`h-1 rounded-full flex-1 ${i <= currentQuestionIndex ? "bg-yellow-400" : "bg-gray-200"}`}
                         />
                     ))}
                 </div>
-
+    
                 {/* Question with blanks */}
                 <div
-                    className="text-center text-gray-800 font-semibold text-[20px] leading-[22px]"
-                    style={{ width: "811px", height: "166px", gap: "18px", alignSelf: "center" }}
+                    className="text-center text-gray-800 font-semibold text-[20px] leading-[22px] sm:w-[80%] lg:w-[811px] mx-auto"
+                    style={{ height: "166px", gap: "18px" }}
                 >
                     <div className="flex flex-wrap justify-center items-center gap-2">
                         {parsedQuestion.map((part, idx) => (
@@ -221,20 +218,21 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         ))}
                     </div>
                 </div>
-
+    
                 {/* Options */}
                 <div
                     className="flex flex-wrap justify-center items-center"
-                    style={{ width: "895px", height: "252px", gap: "64px" }}
+                    style={{ gap: "16px", width: "100%", height: "252px" }}
                 >
-                    <div className="grid grid-cols-2 gap-[16px]">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-[16px]">
                         {currentQuestion.options.map((option, idx) => (
                             <Button
                                 key={idx}
                                 onClick={() => handleOptionClick(option)}
                                 className="text-gray-800 text-sm font-medium hover:bg-blue-50"
                                 style={{
-                                    width: "377px",
+                                    width: "100%",
+                                    maxWidth: "377px",
                                     height: "38px",
                                     padding: "8px 12px",
                                     justifyContent: "center",
@@ -247,7 +245,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         ))}
                     </div>
                 </div>
-
+    
                 {/* Next Button (Icon Only) */}
                 <div className="absolute bottom-10 right-10">
                     <button
@@ -264,6 +262,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
             </div>
         </div>
     );
+    
 };
 
 export default QuestionScreen;

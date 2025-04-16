@@ -25,7 +25,7 @@ const QuizReviewScreen = () => {
     for (let i = 0; i < questionParts.length; i++) {
       constructed += questionParts[i];
       if (i < answers.length) {
-        constructed += answers[i];
+        constructed += answers[i].toLocaleLowerCase();
       }
     }
     return constructed;
@@ -57,11 +57,11 @@ const QuizReviewScreen = () => {
   }
 
   return (
-    <div className="w-screen min-h-screen bg-gray-50 p-10 flex flex-col items-center gap-6">
-      <h1 className="text-3xl font-bold mb-6">Quiz Review</h1>
+    <div className="w-full min-h-screen bg-gray-50 p-4 sm:p-10 flex flex-col items-center gap-6">
+      <h1 className="text-3xl font-bold mb-6 text-center">Quiz Review</h1>
 
       {/* Ellipse Score Section */}
-      <div className="w-[743px] h-[458.7px] flex flex-col items-center gap-[24px]">
+      <div className="w-full max-w-[743px] flex flex-col items-center gap-6">
         {/* Ellipse Shape */}
         <div className="w-[144.7px] h-[144.7px] border-[9.92px] border-[#317F39] rounded-full flex flex-col items-center justify-center">
           <div className="w-[66.97px] h-[62px] flex items-center justify-center">
@@ -77,13 +77,16 @@ const QuizReviewScreen = () => {
         </div>
 
         {/* Feedback Paragraph */}
-        <div className="w-[743px] h-[84px] text-center text-[#2A2D2D] font-inter text-[18px] leading-[28px] font-normal tracking-[-0.01em]">
+        <div className="w-full max-w-[743px] text-center text-[#2A2D2D] font-inter text-[16px] sm:text-[18px] leading-[28px] font-normal tracking-[-0.01em]">
           While you correctly formed several sentences, there are a couple of areas where improvement is needed. Pay close attention to sentence structure and word placement to ensure clarity and correctness. Review your responses below for more details.
         </div>
 
         {/* Go to Dashboard Button */}
-        <div className="w-[270.5px] h-[110px] flex flex-col gap-4 items-center">
-          <button className="w-[270.5px] h-[54px] border border-[#453FE1] rounded-[8px] px-6 py-4 flex items-center justify-center" onClick={handleDashboard}>
+        <div className="w-full max-w-[270.5px] flex flex-col gap-4 items-center">
+          <button
+            className="w-full h-[54px] border border-[#453FE1] rounded-[8px] px-6 py-4 flex items-center justify-center"
+            onClick={handleDashboard}
+          >
             <span className="text-[#453FE1] font-inter font-medium text-[16px] leading-[22px] tracking-[-0.01em]">
               Go to Dashboard
             </span>
@@ -105,7 +108,7 @@ const QuizReviewScreen = () => {
         return (
           <div
             key={index}
-            className="w-[700px] rounded-[16px] shadow-[0px_4px_70px_0px_#CB353E1A] overflow-hidden bg-white"
+            className="w-full max-w-[700px] rounded-[16px] shadow-[0px_4px_70px_0px_#CB353E1A] overflow-hidden bg-white"
           >
             {/* Prompt Section */}
             <div className="w-full px-4 pt-4 pb-3 flex flex-col gap-3">
@@ -125,8 +128,8 @@ const QuizReviewScreen = () => {
             </div>
 
             {/* Response Section */}
-            <div className="w-full flex flex-col gap-3 bg-[#F6F9F9] p-6 rounded-b-[16px]">
-              <div className="flex gap-3 items-center">
+            <div className="w-full flex flex-col gap-3 bg-[#F6F9F9] p-4 sm:p-6 rounded-b-[16px]">
+              <div className="flex flex-wrap gap-3 items-center">
                 <div className="text-[#616464] text-[16px] font-medium font-inter tracking-[-0.01em]">
                   Your response
                 </div>
@@ -154,6 +157,7 @@ const QuizReviewScreen = () => {
         );
       })}
     </div>
+
   );
 };
 
