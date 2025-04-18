@@ -171,7 +171,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
     };
 
     return (
-        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+        <div className="w-full h-screen bg-gray-100 flex items-center justify-center">
             <div
                 className="relative bg-white rounded-[24px] p-[20px] sm:p-[30px] lg:p-[40px] flex flex-col justify-between max-w-full"
                 style={{ maxWidth: "975px", height: "650px", gap: "6px" }}
@@ -185,8 +185,9 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                     >
                         Quit
                     </Button>
+
                 </div>
-    
+
                 {/* Progress bar */}
                 <div className="flex gap-2 mt-6" style={{ height: "16px", paddingBottom: "6rem" }}>
                     {Array.from({ length: totalQuestions }).map((_, i) => (
@@ -196,7 +197,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         />
                     ))}
                 </div>
-    
+
                 {/* Question with blanks */}
                 <div
                     className="text-center text-gray-800 font-semibold text-[20px] leading-[22px] sm:w-[80%] lg:w-[811px] mx-auto"
@@ -218,7 +219,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         ))}
                     </div>
                 </div>
-    
+
                 {/* Options */}
                 <div
                     className="flex flex-wrap justify-center items-center"
@@ -245,7 +246,7 @@ const QuestionScreen = ({ data }: { data: Data }) => {
                         ))}
                     </div>
                 </div>
-    
+
                 {/* Next Button (Icon Only) */}
                 <div className="absolute bottom-10 right-10">
                     <button
@@ -262,7 +263,6 @@ const QuestionScreen = ({ data }: { data: Data }) => {
             </div>
         </div>
     );
-    
 };
 
 export default QuestionScreen;
